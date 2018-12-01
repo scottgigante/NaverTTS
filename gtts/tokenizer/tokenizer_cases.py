@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from gtts.tokenizer import RegexBuilder, symbols
+from . import RegexBuilder, symbols
 
 
 def tone_marks():

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from gtts import gTTS, gTTSError, __version__
-from gtts.lang import tts_langs
+from . import gTTS, gTTSError, __version__
+from .lang import tts_langs
 import click
 import logging
 import logging.config

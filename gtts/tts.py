@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from gtts.tokenizer import pre_processors, Tokenizer, tokenizer_cases
-from gtts.utils import _minimize, _len, _clean_tokens
-from gtts.lang import tts_langs
+from .tokenizer import pre_processors, Tokenizer, tokenizer_cases
+from .utils import _minimize, _len, _clean_tokens
+from .lang import tts_langs
 
-from gtts_token import gtts_token
-from six.moves import urllib
+from .gtts_token import gtts_token
+import urllib
 import urllib3
 import requests
 import logging
