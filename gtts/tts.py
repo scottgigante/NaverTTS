@@ -5,8 +5,8 @@ from .lang import tts_langs
 
 from .gtts_token import gtts_token
 import urllib
-import urllib3
 import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import logging
 
 __all__ = ['gTTS', 'gTTSError']
@@ -175,7 +175,7 @@ class gTTS:
         """
         # When disabling ssl verify in requests (for proxies and firewalls),
         # urllib3 prints an insecure warning on stdout. We disable that.
-        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
         text_parts = self._tokenize(self.text)
         log.debug("text_parts: %i", len(text_parts))
