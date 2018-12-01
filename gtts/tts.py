@@ -8,6 +8,7 @@ import urllib
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import logging
+import os
 
 __all__ = ['gTTS', 'gTTSError']
 
@@ -243,9 +244,13 @@ class gTTS:
             :class:`gTTSError`: When there's an error with the API request.
 
         """
-        with open(savefile, 'wb') as f:
-            self.write_to_fp(f)
-            log.debug("Saved to %s", savefile)
+        try:
+            with open(savefile, 'wb') as f:
+                self.write_to_fp(f)
+                log.debug("Saved to %s", savefile)
+        except gTTSError as e:
+            os.remove(savefile)
+            raise e
 
 
 class gTTSError(Exception):
