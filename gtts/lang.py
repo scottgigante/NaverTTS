@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from gtts.utils import _translate_url
+from .utils import _translate_url
 from bs4 import BeautifulSoup
 import requests
 import logging
