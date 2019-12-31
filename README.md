@@ -6,9 +6,8 @@ manipulation, or `stdout`. <http://gtts.readthedocs.org/>
 
 [![PyPI version](https://img.shields.io/pypi/v/gTTS.svg)](https://pypi.org/project/gTTS/)
 [![Python versions](https://img.shields.io/pypi/pyversions/gTTS.svg)](https://pypi.org/project/gTTS/)
-[![Build Status](https://travis-ci.org/pndurette/gTTS.svg?branch=master)](https://travis-ci.org/pndurette/gTTS)
-[![AppVeyor](https://ci.appveyor.com/api/projects/status/eiuxodugo78kemff/branch/master?svg=true)](https://ci.appveyor.com/project/pndurette/gtts)
-[![Coveralls](https://coveralls.io/repos/github/pndurette/gTTS/badge.svg?branch=master)](https://coveralls.io/github/pndurette/gTTS?branch=master)
+[![Push workflow](https://github.com/pndurette/gTTS/workflows/Push/badge.svg)](https://github.com/pndurette/gTTS/actions)
+[![codecov](https://codecov.io/gh/pndurette/gTTS/branch/master/graph/badge.svg)](https://codecov.io/gh/pndurette/gTTS)
 [![Commits Since](https://img.shields.io/github/commits-since/pndurette/gTTS/latest.svg)](https://github.com/pndurette/gTTS/commits/)
 [![PyPi Downloads](http://pepy.tech/badge/gtts)](http://pepy.tech/project/gtts)
 
@@ -43,4 +42,4 @@ See <http://gtts.readthedocs.org/> for documentation and examples.
 
 ### Licence
 
-[The MIT License (MIT)](LICENSE) Copyright © 2014-2018 Pierre Nicolas Durette
+[The MIT License (MIT)](LICENSE) Copyright © 2014-2019 Pierre Nicolas Durette

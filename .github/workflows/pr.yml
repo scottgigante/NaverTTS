@@ -1,0 +1,69 @@
+name: PR to Master
+on:
+  pull_request:
+    branches:
+     - master
+
+jobs:
+  test:
+    name: Test
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      max-parallel: 15
+      matrix:
+        # Explicitly test for all supported pythons
+        python-version: ['2.x', 3.5, 3.6, 3.7, 3.8]
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+        exclude: 
+        # Exclude what is already tested in the Push workflow
+        # (i.e. latest python 2, latest python 3)
+        - os: ubuntu-latest
+          python-version: '2.x'
+        - os: ubuntu-latest
+          python-version: '3.x'
+          
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[tests]
+
+      - name: Unit Tests
+        run: pytest -v -s gtts/
+        env:
+          TEST_LANGS: en
+
+  test_other:
+    name: Test (non ver. specific)
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: actions/setup-python@v1
+        with:
+          python-version: '3.x'
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[tests]
+
+      - name: Coverage
+        env:
+          TEST_LANGS: en
+        run: pytest -v -s gtts/  --cov=gtts --cov-config=setup.cfg --cov-report=xml
+
+      - name: Unit Tests (TTS langs)
+        env:
+          TEST_LANGS: all
+        run: pytest -v gtts/tests/test_tts.py

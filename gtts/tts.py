@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from .tokenizer import pre_processors, Tokenizer, tokenizer_cases
-from .utils import _minimize, _len, _clean_tokens
+from .utils import _minimize, _len, _clean_tokens, _translate_url
 from .lang import tts_langs
 
 from .gtts_token import gtts_token
@@ -34,6 +34,10 @@ class gTTS:
 
     Args:
         text (string): The text to be read.
+        tld (string): Top-level domain for the Google Translate host,
+            i.e `https://translate.google.<tld>`. This is useful where
+            google.com might be blocked in a network but a local Google
+            host is not. Default is ``com``.
         lang (string, optional): The language (IETF language tag) to
             read the text in. Defaults to 'en'.
         slow (bool, optional): Reads text more slowly. Defaults to ``False``.
@@ -58,6 +62,7 @@ class gTTS:
                 Tokenizer([
                     tokenizer_cases.tone_marks,
                     tokenizer_cases.period_comma,
+                    tokenizer_cases.colon,
                     tokenizer_cases.other_punctuation
                 ]).run
 
@@ -74,7 +79,6 @@ class gTTS:
     """
 
     GOOGLE_TTS_MAX_CHARS = 100  # Max characters the Google TTS API takes at a time
-    GOOGLE_TTS_URL = "https://translate.google.com/translate_tts"
     GOOGLE_TTS_HEADERS = {
         "Referer": "http://translate.google.com/",
         "User-Agent":
@@ -86,6 +90,7 @@ class gTTS:
     def __init__(
             self,
             text,
+            tld='com',
             lang='en',
             slow=False,
             lang_check=True,
@@ -98,6 +103,7 @@ class gTTS:
             tokenizer_func=Tokenizer([
                 tokenizer_cases.tone_marks,
                 tokenizer_cases.period_comma,
+                tokenizer_cases.colon,
                 tokenizer_cases.other_punctuation
             ]).run
     ):
@@ -112,10 +118,13 @@ class gTTS:
         assert text, 'No text to speak'
         self.text = text
 
+        # Translate URL top-level domain
+        self.tld = tld
+
         # Language
         if lang_check:
             try:
-                langs = tts_langs()
+                langs = tts_langs(self.tld)
                 if lang.lower() not in langs:
                     raise ValueError("Language not supported: %s" % lang)
             except RuntimeError as e:
@@ -178,6 +187,7 @@ class gTTS:
         # urllib3 prints an insecure warning on stdout. We disable that.
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+        translate_url = _translate_url(tld=self.tld, path="translate_tts")
         text_parts = self._tokenize(self.text)
         log.debug("text_parts: %i", len(text_parts))
         assert text_parts, 'No text to send to TTS API'
@@ -206,7 +216,7 @@ class gTTS:
 
             try:
                 # Request
-                r = requests.get(self.GOOGLE_TTS_URL,
+                r = requests.get(url=translate_url,
                                  params=payload,
                                  headers=self.GOOGLE_TTS_HEADERS,
                                  proxies=urllib.request.getproxies(),
@@ -217,12 +227,14 @@ class gTTS:
                 log.debug("status-%i: %s", idx, r.status_code)
 
                 r.raise_for_status()
-            except requests.exceptions.HTTPError:
+            except requests.exceptions.HTTPError as e:  # pragma: no cover
                 # Request successful, bad response
+                log.debug(str(e))
                 raise gTTSError(tts=self, response=r)
             except requests.exceptions.RequestException as e:  # pragma: no cover
                 # Request failed
-                raise gTTSError(str(e))
+                log.debug(str(e))
+                raise gTTSError(tts=self)
 
             try:
                 # Write
@@ -248,9 +260,9 @@ class gTTS:
             with open(savefile, 'wb') as f:
                 self.write_to_fp(f)
                 log.debug("Saved to %s", savefile)
-        except gTTSError as e:
+        except gTTSError:
             os.remove(savefile)
-            raise e
+            raise
 
 
 class gTTSError(Exception):
@@ -261,29 +273,39 @@ class gTTSError(Exception):
         self.rsp = kwargs.pop('response', None)
         if msg:
             self.msg = msg
-        elif self.tts is not None and self.rsp is not None:
+        elif self.tts is not None:
             self.msg = self.infer_msg(self.tts, self.rsp)
         else:
             self.msg = None
         super(gTTSError, self).__init__(self.msg)
 
-    def infer_msg(self, tts, rsp):
+    def infer_msg(self, tts, rsp=None):
         """Attempt to guess what went wrong by using known
         information (e.g. http response) and observed behaviour
 
         """
-        # rsp should be <requests.Response>
-        # http://docs.python-requests.org/en/master/api/
-        status = rsp.status_code
-        reason = rsp.reason
-
         cause = "Unknown"
-        if status == 403:
-            cause = "Bad token or upstream API changes"
-        elif status == 404 and not tts.lang_check:
-            cause = "Unsupported language '%s'" % self.tts.lang
-        elif status >= 500:
-            cause = "Uptream API error. Try again later."
 
-        return "%i (%s) from TTS API. Probable cause: %s" % (
-            status, reason, cause)
+        if rsp is None:
+            premise = "Failed to connect"
+
+            if tts.tld != 'com':
+                host = _translate_url(tld=tts.tld)
+                cause = "Host '{}' is not reachable".format(host)
+
+        else:
+            # rsp should be <requests.Response>
+            # http://docs.python-requests.org/en/master/api/
+            status = rsp.status_code
+            reason = rsp.reason
+
+            premise = "{:d} ({}) from TTS API".format(status, reason)
+
+            if status == 403:
+                cause = "Bad token or upstream API changes"
+            elif status == 404 and not tts.lang_check:
+                cause = "Unsupported language '%s'" % self.tts.lang
+            elif status >= 500:
+                cause = "Uptream API error. Try again later."
+
+        return "{}. Probable cause: {}".format(premise, cause)

@@ -30,7 +30,7 @@ Write 'hello' in English to ``hello.mp3``::
 Write 'hello bonjour' in English then French to ``hello_bonjour.mp3``::
 
     >>> from gtts import gTTS
-    >>> tts_en = gTTs('hello', lang='en')
+    >>> tts_en = gTTS('hello', lang='en')
     >>> tts_fr = gTTS('bonjour', lang='fr')
     >>>
     >>> with open('hello_bonjour.mp3', 'wb') as f:
@@ -49,7 +49,7 @@ There's quite a few libraries that do this. Write 'hello' to a file-like object 
     >>> tts = gTTS('hello', 'en')
     >>> tts.write_to_fp(mp3_fp)
     >>>
-    >>> # Load `audio_fp` as an mp3 file in
+    >>> # Load `mp3_fp` as an mp3 file in
     >>> # the audio library of your choice
 
 Logging

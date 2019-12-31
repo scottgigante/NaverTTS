@@ -9,6 +9,57 @@ Changelog
 
 .. towncrier release notes start
 
+2.0.4 (2019-08-29)
+------------------
+
+Features
+~~~~~~~~
+
+- gTTS is now built as a wheel package (Python 2 & 3) (`#181 <https://github.com/pndurette/gTTS/issues/181>`_)
+
+
+Improved Documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
+- Fixed bad example in docs (`#163 <https://github.com/pndurette/gTTS/issues/163>`_, `#166 <https://github.com/pndurette/gTTS/issues/166>`_)
+
+
+Misc
+~~~~
+
+- `#164 <https://github.com/pndurette/gTTS/issues/164>`_, `#171 <https://github.com/pndurette/gTTS/issues/171>`_, `#173 <https://github.com/pndurette/gTTS/issues/173>`_, `#185 <https://github.com/pndurette/gTTS/issues/185>`_
+
+
+2.0.3 (2018-12-15)
+------------------
+
+Features
+~~~~~~~~
+
+- Added new tokenizer case for ':' preventing cut in the middle of a time notation (`#135 <https://github.com/pndurette/gTTS/issues/135>`_)
+
+
+Misc
+~~~~
+
+- `#159 <https://github.com/pndurette/gTTS/issues/159>`_
+
+
+2.0.2 (2018-12-09)
+------------------
+
+Features
+~~~~~~~~
+
+- Added Python 3.7 support, modernization of packaging, testing and CI (`#126 <https://github.com/pndurette/gTTS/issues/126>`_)
+
+
+Bugfixes
+~~~~~~~~
+
+- Fixed language retrieval/validation broken from new Google Translate page (`#156 <https://github.com/pndurette/gTTS/issues/156>`_)
+
+
 2.0.1 (2018-06-20)
 ------------------
 
