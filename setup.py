@@ -7,7 +7,7 @@ version = open(version_py).read().strip().split("=")[-1].replace('"', "").strip(
 setup(
     name = 'NaverTTS',
     packages = find_packages(),
-    python_requires = '>= 2.7',
+    python_requires = '>= 3.5',
     setup_requires = [
 	'setuptools >= 38.6',
 	'wheel >= 0.31.0',
