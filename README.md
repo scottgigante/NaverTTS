@@ -9,7 +9,7 @@ manipulation, or `stdout`.
 [![PyPI version](https://img.shields.io/pypi/v/NaverTTS.svg)](https://pypi.org/project/NaverTTS/)
 [![Python versions](https://img.shields.io/pypi/pyversions/NaverTTS.svg)](https://pypi.org/project/NaverTTS/)
 [![PyPi Downloads](http://pepy.tech/badge/NaverTTS)](http://pepy.tech/project/NaverTTS)
-[![Travis CI Build](https://api.travis-ci.com/KrishnaswamyLab/phate.svg?branch=master)](https://travis-ci.com/KrishnaswamyLab/PHATE)
+[![Travis CI Build](https://api.travis-ci.com/scottgigante/NaverTTS.svg?branch=master)](https://travis-ci.com/scottgigante/NaverTTS)
 
 ## Features
 
