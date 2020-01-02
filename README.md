@@ -1,6 +1,6 @@
 # NaverTTS
 
-![Papago Logo](papago.svg)
+![Papago Logo](https://raw.githubusercontent.com/scottgigante/NaverTTS/master/papago.svg)
 
 **NaverTTS** (*NAVER Text-to-Speech*), a Python library and CLI tool to interface with NAVER Papago's text-to-speech API. 
 Writes spoken `mp3` data to a file, a file-like object (bytestring) for further audio
