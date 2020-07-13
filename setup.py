@@ -20,7 +20,7 @@ setup(
 	'requests',
     ],
     extras_require = {'test' : [
-	'pytest >= 3.9',
+	'pytest >= 4.6',
 	'pytest-cov',
 	'flake8',
 	'testfixtures',
