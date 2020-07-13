@@ -19,7 +19,7 @@ SPEAKERS = {
     'es' : {'f' : 'carmen',
             'm' : 'jose'},
     'ja' : {'m' : 'shinji'},
-    'ko' : {'f' : 'mijin',
+    'ko' : {'f' : 'kyuri',
             'm' : 'jinho'},
     'zh' : {'f' : 'meimei',
             'm' : 'liangliang'},
