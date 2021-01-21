@@ -13,7 +13,8 @@ def tone_marks(text):
     return PreProcessorRegex(
         search_args=symbols.TONE_MARKS,
         search_func=lambda x: u"(?<={})".format(x),
-        repl=' ').run(text)
+        repl=" ",
+    ).run(text)
 
 
 def end_of_line_hyphen(text):
@@ -23,18 +24,15 @@ def end_of_line_hyphen(text):
 
     """
     return PreProcessorRegex(
-        search_args=u'-',
-        search_func=lambda x: u"{}\n".format(x),
-        repl='').run(text)
+        search_args=u"-", search_func=lambda x: u"{}\n".format(x), repl=""
+    ).run(text)
 
 
 def newline(text):
-    """Replace <newline> with <space>
-    """
+    """Replace <newline> with <space>"""
     return PreProcessorRegex(
-        search_args=u'\n',
-        search_func=lambda x: u"{}".format(x),
-        repl=' ').run(text)
+        search_args=u"\n", search_func=lambda x: u"{}".format(x), repl=" "
+    ).run(text)
 
 
 def abbreviations(text):
@@ -54,10 +52,11 @@ def abbreviations(text):
     return PreProcessorRegex(
         search_args=symbols.ABBREVIATIONS,
         search_func=lambda x: r"(?<={})(?=\.).".format(x),
-        repl='', flags=re.IGNORECASE).run(text)
+        repl="",
+        flags=re.IGNORECASE,
+    ).run(text)
 
 
 def word_sub(text):
     """Word-for-word substitutions."""
-    return PreProcessorSub(
-        sub_pairs=symbols.SUB_PAIRS).run(text)
+    return PreProcessorSub(sub_pairs=symbols.SUB_PAIRS).run(text)

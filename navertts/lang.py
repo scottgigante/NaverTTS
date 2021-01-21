@@ -5,7 +5,7 @@ import logging
 import re
 from . import constants
 
-__all__ = ['tts_langs']
+__all__ = ["tts_langs"]
 
 # Logger
 log = logging.getLogger(__name__)

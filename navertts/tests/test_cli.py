@@ -10,7 +10,8 @@ from navertts.cli import tts_cli
 # - Clear 'navertts' logger handlers (set in navertts.cli) to reduce test noise
 import logging
 from testfixtures import LogCapture
-logger = logging.getLogger('navertts')
+
+logger = logging.getLogger("navertts")
 logger.handlers = []
 
 
@@ -22,15 +23,15 @@ def runner(args, input=None):
 
 
 def runner_debug(args, input=None):
-    return CliRunner().invoke(tts_cli, args + ['--debug'], input)
+    return CliRunner().invoke(tts_cli, args + ["--debug"], input)
 
 
 def test_text_text_and_file(tmp_path):
     """<test> (arg) and <file> <opt> should not be set together"""
-    filename = tmp_path / 'test_and_file.txt'
+    filename = tmp_path / "test_and_file.txt"
     filename.touch()
 
-    result = runner_debug(['--file', str(filename), 'test'])
+    result = runner_debug(["--file", str(filename), "test"])
 
     assert "<file> can't be used together" in result.output
     assert result.exit_code != 0
@@ -38,10 +39,10 @@ def test_text_text_and_file(tmp_path):
 
 def test_text_empty(tmp_path):
     """Exit on no text to speak (via <file>)"""
-    filename = tmp_path / 'text_empty.txt'
+    filename = tmp_path / "text_empty.txt"
     filename.touch()
 
-    result = runner_debug(['--file', str(filename)])
+    result = runner_debug(["--file", str(filename)])
 
     assert "No text to speak" in result.output
     assert result.exit_code != 0
@@ -50,7 +51,7 @@ def test_text_empty(tmp_path):
 # <file> tests
 def test_file_not_exists():
     """<file> should exist"""
-    result = runner_debug(['--file', 'notexist.txt', 'test'])
+    result = runner_debug(["--file", "notexist.txt", "test"])
 
     assert "No such file or directory" in result.output
     assert result.exit_code != 0
@@ -59,7 +60,7 @@ def test_file_not_exists():
 # <all> tests
 def test_all():
     """Option <all> should return a list of languages"""
-    result = runner(['--all'])
+    result = runner(["--all"])
 
     # One or more of "  xy: name" (\n optional to match the last)
     # Ex. "<start>  xx: xxxxx\n  xx-yy: xxxxx\n  xx: xxxxx<end>"
@@ -71,7 +72,7 @@ def test_all():
 # <lang> tests
 def test_lang_not_valid():
     """Invalid <lang> should display an error"""
-    result = runner(['--lang', 'xx', 'test'])
+    result = runner(["--lang", "xx", "test"])
 
     assert "xx' not in list of supported languages" in result.output
     assert result.exit_code != 0
@@ -80,14 +81,15 @@ def test_lang_not_valid():
 def test_lang_nocheck():
     """Invalid <lang> (with <nocheck>) should display an error message from gtts"""
     with LogCapture() as lc:
-        result = runner_debug(['--lang', 'xx', '--nocheck', 'test'])
+        result = runner_debug(["--lang", "xx", "--nocheck", "test"])
 
         log = str(lc)
 
-    assert 'lang: xx' in log
-    assert 'lang_check: False' in log
+    assert "lang: xx" in log
+    assert "lang_check: False" in log
     assert "No speaker for language xx" in result.output
     assert result.exit_code != 0
+
 
 # Param set tests
 
@@ -95,15 +97,17 @@ def test_lang_nocheck():
 def test_params_set():
     """Options should set gTTS instance arguments (read from debug log)"""
     with LogCapture() as lc:
-        result = runner_debug(['--lang', 'en', '--tld', 'com', '--speed', 'slow', '--nocheck', 'test'])
+        result = runner_debug(
+            ["--lang", "en", "--tld", "com", "--speed", "slow", "--nocheck", "test"]
+        )
 
         log = str(lc)
 
-    assert 'lang: en' in log
-    assert 'tld: com' in log
-    assert 'lang_check: False' in log
-    assert 'speed: slow' in log
-    assert 'text: test' in log
+    assert "lang: en" in log
+    assert "tld: com" in log
+    assert "lang_check: False" in log
+    assert "speed: slow" in log
+    assert "text: test" in log
     assert result.exit_code == 0
 
 
@@ -124,7 +128,7 @@ textstdin_unicode = u"""你吃饭了吗？
 text = """Can you make pink a little more pinkish can you make pink a little more pinkish, nor can you make the font bigger?
 How much will it cost the website doesn't have the theme i was going for."""
 
-textfile_ascii = os.path.join(pwd, 'input_files', 'test_cli_test_ascii.txt')
+textfile_ascii = os.path.join(pwd, "input_files", "test_cli_test_ascii.txt")
 
 # Text for <text> and <file> (Unicode)
 text_unicode = u"""这是一个三岁的小孩
@@ -133,7 +137,7 @@ text_unicode = u"""这是一个三岁的小孩
 但在一个重要的任务上， 她已经是专家了：
 去理解她所看到的东西。"""
 
-textfile_utf8 = os.path.join(pwd, 'input_files', 'test_cli_test_utf8.txt')
+textfile_utf8 = os.path.join(pwd, "input_files", "test_cli_test_utf8.txt")
 
 """
 Method that mimics's LogCapture's __str__ method to make
@@ -144,9 +148,9 @@ https://github.com/Simplistix/testfixtures/blob/32c87902cb111b7ede5a6abca9b597db
 
 def logcapture_str(lc):
     if not lc.records:
-        return 'No logging captured'
+        return "No logging captured"
 
-    return '\n'.join([u"%s %s\n  %s" % r for r in lc.actual()])
+    return "\n".join([u"%s %s\n  %s" % r for r in lc.actual()])
 
 
 def test_stdin_text():
@@ -154,34 +158,34 @@ def test_stdin_text():
         result = runner_debug([], textstdin)
         log = logcapture_str(lc)
 
-    assert 'text: %s' % textstdin in log
+    assert "text: %s" % textstdin in log
     assert result.exit_code == 0
 
 
 def test_stdin_text_unicode():
     with LogCapture() as lc:
-        result = runner_debug(['-'], textstdin_unicode)
+        result = runner_debug(["-"], textstdin_unicode)
         log = logcapture_str(lc)
 
-    assert u'text: %s' % textstdin_unicode in log
+    assert u"text: %s" % textstdin_unicode in log
     assert result.exit_code == 0
 
 
 def test_stdin_file():
     with LogCapture() as lc:
-        result = runner_debug(['--file', '-'], textstdin)
+        result = runner_debug(["--file", "-"], textstdin)
         log = logcapture_str(lc)
 
-    assert 'text: %s' % textstdin in log
+    assert "text: %s" % textstdin in log
     assert result.exit_code == 0
 
 
 def test_stdin_file_unicode():
     with LogCapture() as lc:
-        result = runner_debug(['--file', '-'], textstdin_unicode)
+        result = runner_debug(["--file", "-"], textstdin_unicode)
         log = logcapture_str(lc)
 
-    assert 'text: %s' % textstdin_unicode in log
+    assert "text: %s" % textstdin_unicode in log
     assert result.exit_code == 0
 
 
@@ -205,7 +209,7 @@ def test_text_unicode():
 
 def test_file_ascii():
     with LogCapture() as lc:
-        result = runner_debug(['--file', textfile_ascii])
+        result = runner_debug(["--file", textfile_ascii])
         log = logcapture_str(lc)
 
     assert "text: %s" % text in log
@@ -214,7 +218,7 @@ def test_file_ascii():
 
 def test_file_utf8():
     with LogCapture() as lc:
-        result = runner_debug(['--file', textfile_utf8])
+        result = runner_debug(["--file", textfile_utf8])
         log = logcapture_str(lc)
 
     assert "text: %s" % text_unicode in log
@@ -222,23 +226,23 @@ def test_file_utf8():
 
 
 def test_stdout():
-    result = runner(['test'])
+    result = runner(["test"])
 
     # The MP3 encoding leaves a signature in the raw output
-    assert 'VoiceTTS@NAVER' in result.output
-    assert 'ID3' in result.output
+    assert "VoiceTTS@NAVER" in result.output
+    assert "ID3" in result.output
     assert result.exit_code == 0
 
 
 def test_file(tmp_path):
-    filename = tmp_path / 'out.mp3'
+    filename = tmp_path / "out.mp3"
 
-    result = runner(['test', '--output', str(filename)])
+    result = runner(["test", "--output", str(filename)])
 
     # Check if files created is > 2k
     assert filename.stat().st_size > 2000
     assert result.exit_code == 0
 
 
-if __name__ == '__main__':
-    pytest.main(['-x', __file__])
+if __name__ == "__main__":
+    pytest.main(["-x", __file__])
