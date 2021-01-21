@@ -1,8 +1,8 @@
 # NaverTTS
 
-<img width=600 src="https://raw.githubusercontent.com/scottgigante/NaverTTS/master/papago.svg?sanitize=true">
+<img width=600 src="https://developers.naver.com/inc/devcenter/images/clova_thumbnail_1200x630.png">
 
-**NaverTTS** (*NAVER Text-to-Speech*), a Python library and CLI tool to interface with NAVER Papago's text-to-speech API. 
+**NaverTTS** (*NAVER Text-to-Speech*), a Python library and CLI tool to interface with NAVER CLOVA text-to-speech API.
 Writes spoken `mp3` data to a file, a file-like object (bytestring) for further audio
 manipulation, or `stdout`.
 

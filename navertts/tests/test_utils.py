@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import pytest
 from navertts.utils import _minimize, _len, _clean_tokens
-from navertts.constants import translate_init, translate_endpoint
+from navertts.constants import translate_endpoint
 
-delim = ' '
+delim = " "
 Lmax = 10
 
 
@@ -54,13 +54,13 @@ def test_strip():
 
 
 def test_translate_url():
-    _in = {"tld": "qwerty"}
-    _out = "https://papago.naver.qwerty/apis/tts/makeID"
-    assert translate_init(**_in) == _out
-    _in = {"tld": "qwerty", 'id': 'uiop'}
-    _out = 'https://papago.naver.qwerty/apis/tts/uiop'
+    _in = {"tld": "qwerty", "text": "uiop", "speed": 5, "speaker": "foobar"}
+    _out = (
+        "https://dict.naver.qwerty/api/nvoice"
+        "?service=dictionary&speech_fmt=mp3&text=uiop&speaker=foobar&speed=5"
+    )
     assert translate_endpoint(**_in) == _out
 
 
-if __name__ == '__main__':
-    pytest.main(['-x', __file__])
+if __name__ == "__main__":
+    pytest.main(["-x", __file__])

@@ -9,10 +9,8 @@ import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import logging
 import os
-import json
-import base64
 
-__all__ = ['NaverTTS', 'NaverTTSError']
+__all__ = ["NaverTTS", "NaverTTSError"]
 
 # Logger
 log = logging.getLogger(__name__)
@@ -20,8 +18,8 @@ log.addHandler(logging.NullHandler())
 
 
 class Speed:
-    """Read Speed
-    """
+    """Read Speed."""
+
     SLOW = 5
     NORMAL = 0
     FAST = -5
@@ -37,7 +35,7 @@ class NaverTTS:
         tld (string, optional): Top-level domain. Defaults to 'com'.
         lang (string, optional): The language (IETF language tag) to
             read the text in. Defaults to 'ko'.
-        speed (str or int, optional): Choice of {'slow' (5), 'normal' (0), 'fast' (-5)}. 
+        speed (str or int, optional): Choice of {'slow' (5), 'normal' (0), 'fast' (-5)}.
             Defaults to 'normal'.
         lang_check (bool, optional): Strictly enforce an existing ``lang``,
             to catch a language error early. If set to ``True``,
@@ -79,43 +77,44 @@ class NaverTTS:
     NAVER_TTS_MAX_CHARS = 100  # Max characters the NAVER TTS API takes at a time
     NAVER_TTS_HEADERS = {
         "Referer": "http://papago.naver.com/",
-        "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; WOW64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/47.0.2526.106 Safari/537.36"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/47.0.2526.106 Safari/537.36",
     }
 
     def __init__(
-            self,
-            text,
-            lang='ko',
-            tld='com',
-            speed='normal',
-            gender='f',
-            lang_check=True,
-            pre_processor_funcs=[
-                pre_processors.tone_marks,
-                pre_processors.end_of_line_hyphen,
-                pre_processors.newline,
-                pre_processors.abbreviations,
-                pre_processors.word_sub
-            ],
-            tokenizer_func=Tokenizer([
+        self,
+        text,
+        lang="ko",
+        tld="com",
+        speed="normal",
+        gender="f",
+        lang_check=True,
+        pre_processor_funcs=[
+            pre_processors.tone_marks,
+            pre_processors.end_of_line_hyphen,
+            pre_processors.newline,
+            pre_processors.abbreviations,
+            pre_processors.word_sub,
+        ],
+        tokenizer_func=Tokenizer(
+            [
                 tokenizer_cases.tone_marks,
                 tokenizer_cases.period_comma,
                 tokenizer_cases.colon,
-                tokenizer_cases.other_punctuation
-            ]).run
+                tokenizer_cases.other_punctuation,
+            ]
+        ).run,
     ):
 
         # Debug
         for k, v in locals().items():
-            if k == 'self':
+            if k == "self":
                 continue
             log.debug("%s: %s", k, v)
 
         # Text
-        assert text, 'No text to speak'
+        assert text, "No text to speak"
         self.text = text
 
         # Translate URL top-level domain
@@ -136,18 +135,20 @@ class NaverTTS:
         self.speaker = constants.get_speaker(self.lang, gender)
 
         # Read speed
-        if speed == 'slow':
+        if speed == "slow":
             self.speed = Speed.SLOW
-        elif speed == 'normal':
+        elif speed == "normal":
             self.speed = Speed.NORMAL
-        elif speed == 'fast':
+        elif speed == "fast":
             self.speed = Speed.FAST
         elif isinstance(speed, int) and -5 <= speed and speed <= 5:
             self.speed = speed
         else:
-            raise ValueError("Expected `speed` in 'slow', 'normal', "
-                              "'fast' or an integer between -5 and 5."
-                              " Got {}".format(speed))
+            raise ValueError(
+                "Expected `speed` in 'slow', 'normal', "
+                "'fast' or an integer between -5 and 5."
+                " Got {}".format(speed)
+            )
 
         # Pre-processors and tokenizer
         self.pre_processor_funcs = pre_processor_funcs
@@ -175,7 +176,7 @@ class NaverTTS:
         # Minimize
         min_tokens = []
         for t in tokens:
-            min_tokens += _minimize(t, ' ', self.NAVER_TTS_MAX_CHARS)
+            min_tokens += _minimize(t, " ", self.NAVER_TTS_MAX_CHARS)
         return min_tokens
 
     def write_to_fp(self, fp):
@@ -193,30 +194,23 @@ class NaverTTS:
         # urllib3 prints an insecure warning on stdout. We disable that.
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-        init_url = constants.translate_init(tld=self.tld)
         text_parts = self._tokenize(self.text)
         log.debug("text_parts: %i", len(text_parts))
-        assert text_parts, 'No text to send to TTS API'
+        assert text_parts, "No text to send to TTS API"
 
         for idx, part in enumerate(text_parts):
 
-            prefix = b'\xaeU\xae\xa1C\x9b,Uzd\xf8\xef'
-            data = 'pitch":0,"speaker":"{speaker}","speed": "{speed}","text":"{text}"'.format(
-                speaker=self.speaker,
-                speed=self.speed,
-                text=part) + '}'
-            log.debug("data-%i: %s", idx, data)
-            payload = {'data': base64.b64encode(prefix + bytes(data, 'utf-8')).decode()}
-
-            log.debug("payload-%i: %s", idx, payload)
-
+            endpoint_url = constants.translate_endpoint(
+                text=part, speaker=self.speaker, speed=self.speed, tld=self.tld
+            )
             try:
                 # Request
-                r = requests.get(url=init_url,
-                                 params=payload,
-                                 headers=self.NAVER_TTS_HEADERS,
-                                 proxies=urllib.request.getproxies(),
-                                 verify=False)
+                r = requests.get(
+                    url=endpoint_url,
+                    headers=self.NAVER_TTS_HEADERS,
+                    proxies=urllib.request.getproxies(),
+                    verify=False,
+                )
 
                 log.debug("headers-%i: %s", idx, r.request.headers)
                 log.debug("url-%i: %s", idx, r.request.url)
@@ -232,22 +226,15 @@ class NaverTTS:
                 log.debug(str(e))
                 raise NaverTTSError(tts=self)
 
-            translate_id = json.loads(r.content.decode())['id']
-            endpoint_url = constants.translate_endpoint(id=translate_id, tld=self.tld)
             try:
-                r = requests.get(url=endpoint_url,
-                                 headers=self.NAVER_TTS_HEADERS,
-                                 proxies=urllib.request.getproxies(),
-                                 verify=False)
-                                 
-                # Write
                 for chunk in r.iter_content(chunk_size=1024):
                     fp.write(chunk)
                 log.debug("part-%i written to %s", idx, fp)
             except (AttributeError, TypeError) as e:
                 raise TypeError(
-                    "'fp' is not a file-like object or it does not take bytes: %s" %
-                    str(e))
+                    "'fp' is not a file-like object or it does not take bytes: %s"
+                    % str(e)
+                )
 
     def save(self, savefile):
         """Do the TTS API request and write result to file.
@@ -261,7 +248,7 @@ class NaverTTS:
         """
         savefile = str(savefile)
         try:
-            with open(savefile, 'wb') as f:
+            with open(savefile, "wb") as f:
                 self.write_to_fp(f)
                 log.debug("Saved to %s", savefile)
         except NaverTTSError:
@@ -270,11 +257,11 @@ class NaverTTS:
 
 
 class NaverTTSError(Exception):
-    """Exception that uses context to present a meaningful error message"""
+    """Exception that uses context to present a meaningful error message."""
 
     def __init__(self, msg=None, **kwargs):
-        self.tts = kwargs.pop('tts', None)
-        self.rsp = kwargs.pop('response', None)
+        self.tts = kwargs.pop("tts", None)
+        self.rsp = kwargs.pop("response", None)
         if msg:
             self.msg = msg
         elif self.tts is not None:
@@ -284,8 +271,9 @@ class NaverTTSError(Exception):
         super(NaverTTSError, self).__init__(self.msg)
 
     def infer_msg(self, tts, rsp=None):
-        """Attempt to guess what went wrong by using known
-        information (e.g. http response) and observed behaviour
+        """Attempt to guess what went wrong.
+
+        Uses known information (e.g. http response) and observed behaviour.
 
         """
         cause = "Unknown"
@@ -293,8 +281,8 @@ class NaverTTSError(Exception):
         if rsp is None:
             premise = "Failed to connect"
 
-            if tts.tld != 'com':
-                host = constants.translate_init(tld=tts.tld)
+            if tts.tld != "com":
+                host = constants.translate_base(tld=tts.tld)
                 cause = "Host '{}' is not reachable".format(host)
 
         else:
