@@ -8,10 +8,6 @@ setup(
     name="NaverTTS",
     packages=find_packages(),
     python_requires=">= 3.5",
-    setup_requires=[
-        "setuptools >= 38.6",
-        "wheel >= 0.31.0",
-    ],
     include_package_data=True,
     install_requires=[
         "six",
