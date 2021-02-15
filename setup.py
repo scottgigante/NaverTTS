@@ -26,6 +26,7 @@ setup(
             "flake8",
             "testfixtures",
             "mock",
+            "coveralls",
         ]
     },
     entry_points={"console_scripts": ["navertts-cli=navertts.cli:tts_cli"]},
