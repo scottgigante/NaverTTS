@@ -29,7 +29,8 @@ setup(
         ]
     },
     entry_points={"console_scripts": ["navertts-cli=navertts.cli:tts_cli"]},
-    description="NaverTTS (NAVER Text-to-Speech), a Python library and CLI tool to interface with NAVER Papago text-to-speech API",
+    description="NaverTTS (NAVER Text-to-Speech), a Python library and CLI tool to "
+    "interface with NAVER Papago text-to-speech API",
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",
     author="Scott Gigante",
