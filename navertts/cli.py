@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from . import NaverTTS, NaverTTSError, __version__
+from . import __version__
+from . import NaverTTS
+from . import NaverTTSError
 from .lang import tts_langs
 import click
 import logging
@@ -22,12 +24,13 @@ log = logging.getLogger("navertts")
 
 
 def sys_encoding():
-    """Charset to use for --file <path>|- (stdin)"""
+    """Charset to use for --file <path>|- (stdin)."""
     return "utf8"
 
 
 def validate_text(ctx, param, text):
-    """Validation callback for the <text> argument.
+    """Validate <text> argument.
+
     Ensures <text> (arg) and <file> (opt) are mutually exclusive
     """
     if not text and "file" not in ctx.params:
@@ -43,7 +46,8 @@ def validate_text(ctx, param, text):
 
 
 def validate_lang(ctx, param, lang):
-    """Validation callback for the <lang> option.
+    """Validate <lang> option.
+
     Ensures <lang> is a supported language unless the <nocheck> flag is set
     Uses <tld> to fetch languages from other domains
     """
@@ -71,8 +75,9 @@ def validate_lang(ctx, param, lang):
 
 
 def validate_speed(ctx, param, speed):
-    """Validation callback for the <lang> option.
-    Ensures <lang> is a supported language unless the <nocheck> flag is set
+    """Validate <speed> option.
+
+    Ensures <speed> is a supported language unless the <nocheck> flag is set
     Uses <tld> to fetch languages from other domains
     """
     if speed in ["slow", "normal", "fast"]:
@@ -89,7 +94,8 @@ def validate_speed(ctx, param, speed):
 
 
 def print_languages(ctx, param, value):
-    """Callback for <all> flag.
+    """Print all languages.
+
     Prints formatted sorted list of supported languages and exits
     """
     if not value or ctx.resilient_parsing:
@@ -113,9 +119,7 @@ def print_languages(ctx, param, value):
 
 
 def set_debug(ctx, param, debug):
-    """Callback for <debug> flag.
-    Sets logger level to DEBUG
-    """
+    """Set logger level to DEBUG."""
     if debug:
         log.setLevel(logging.DEBUG)
     return
@@ -147,7 +151,8 @@ def set_debug(ctx, param, debug):
     default="normal",
     show_default=True,
     callback=validate_speed,
-    help="Reading speed. Choose from 'slow', 'normal', 'fast' or an integer between -5 (fast) and 5 (slow).",
+    help="Reading speed. Choose from 'slow', 'normal', 'fast' "
+    "or an integer between -5 (fast) and 5 (slow).",
 )
 @click.option(
     "-l",
@@ -195,10 +200,10 @@ def set_debug(ctx, param, debug):
 )
 @click.version_option(version=__version__)
 def tts_cli(text, file, output, speed, tld, lang, nocheck):
-    """Read <text> to mp3 format using NAVER Papago's Text-to-Speech API
+    """Read <text> to mp3 format using NAVER Papago's Text-to-Speech API.
+
     (set <text> or --file <file> to - for standard input)
     """
-
     # stdin for <text>
     if text == "-":
         text = click.get_text_stream("stdin").read()

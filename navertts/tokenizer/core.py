@@ -3,7 +3,7 @@ import re
 
 
 class RegexBuilder:
-    """Builds regex using arguments passed into a pattern template.
+    r"""Build regex using arguments passed into a pattern template.
 
     Builds a regex object for which the pattern is made from an argument
     passed into a template. If more than one argument is passed (iterable),
@@ -49,6 +49,7 @@ class RegexBuilder:
     """
 
     def __init__(self, pattern_args, pattern_func, flags=0):
+        """Create the RegexBuilder."""
         self.pattern_args = pattern_args
         self.pattern_func = pattern_func
         self.flags = flags
@@ -67,11 +68,12 @@ class RegexBuilder:
         return re.compile(pattern, self.flags)
 
     def __repr__(self):  # pragma: no cover
+        """Print the regex."""
         return str(self.regex)
 
 
 class PreProcessorRegex:
-    """Regex-based substitution text pre-processor.
+    r"""Regex-based substitution text pre-processor.
 
     Runs a series of regex substitutions (``re.sub``) from each ``regex`` of a
     :class:`gtts.tokenizer.core.RegexBuilder` with an extra ``repl``
@@ -116,6 +118,7 @@ class PreProcessorRegex:
     """
 
     def __init__(self, search_args, search_func, repl, flags=0):
+        """Create the preprocessor."""
         self.repl = repl
 
         # Create regex list
@@ -140,6 +143,7 @@ class PreProcessorRegex:
         return text
 
     def __repr__(self):  # pragma: no cover
+        """Print the preprocessor."""
         subs_strs = []
         for r in self.regexes:
             subs_strs.append("({}, repl='{}')".format(r, self.repl))
@@ -181,6 +185,8 @@ class PreProcessorSub:
     """
 
     def __init__(self, sub_pairs, ignore_case=True):
+        """Create the preprocessor."""
+
         def search_func(x):
             return u"{}".format(x)
 
@@ -209,11 +215,12 @@ class PreProcessorSub:
         return text
 
     def __repr__(self):  # pragma: no cover
+        """Print the preprocessor."""
         return ", ".join([str(pp) for pp in self.pre_processors])
 
 
 class Tokenizer:
-    """An extensible but simple generic rule-based tokenizer.
+    r"""An extensible but simple generic rule-based tokenizer.
 
     A generic and simple string tokenizer that takes a list of functions
     (called `tokenizer cases`) returning ``regex`` objects and joins them by
@@ -288,6 +295,7 @@ class Tokenizer:
     """
 
     def __init__(self, regex_funcs, flags=re.IGNORECASE):
+        """Create the tokenizer."""
         self.regex_funcs = regex_funcs
         self.flags = flags
 
@@ -321,4 +329,5 @@ class Tokenizer:
         return self.total_regex.split(text)
 
     def __repr__(self):  # pragma: no cover
+        """Print the tokenizer."""
         return str(self.total_regex) + " from: " + str(self.regex_funcs)

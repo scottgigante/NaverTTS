@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-from bs4 import BeautifulSoup
-import requests
-import logging
-import re
 from . import constants
+import logging
 
 __all__ = ["tts_langs"]
 

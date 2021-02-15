@@ -24,6 +24,7 @@ SPEAKERS = {
 
 
 def get_speaker(lang="ko", gender="f"):
+    """Get the API name for the chosen speaker."""
     try:
         speakers = SPEAKERS[lang]
     except KeyError:
@@ -39,9 +40,11 @@ def get_speaker(lang="ko", gender="f"):
 
 
 def translate_base(tld="com"):
+    """Get the base URL."""
     return TRANSLATE_ENDPOINT.format(tld=tld)
 
 
 def translate_endpoint(text, speaker="kyuri", speed=0, tld="com"):
+    """Get the endpoint URL."""
     url = translate_base(tld=tld)
     return url + TRANSLATE_PARAMS.format(text=text, speaker=speaker, speed=speed)

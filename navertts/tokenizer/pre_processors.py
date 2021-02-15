@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from . import PreProcessorRegex, PreProcessorSub, symbols
+from . import PreProcessorRegex
+from . import PreProcessorSub
+from . import symbols
 import re
 
 
@@ -29,14 +31,16 @@ def end_of_line_hyphen(text):
 
 
 def newline(text):
-    """Replace <newline> with <space>"""
+    """Replace <newline> with <space>."""
     return PreProcessorRegex(
         search_args=u"\n", search_func=lambda x: u"{}".format(x), repl=" "
     ).run(text)
 
 
 def abbreviations(text):
-    """Remove periods after an abbreviation from a list of known
+    """Fix tokenization of abbreviations.
+
+    Removes periods after an abbreviation from a list of known
     abbrevations that can be spoken the same without that period. This
     prevents having to handle tokenization of that period.
 

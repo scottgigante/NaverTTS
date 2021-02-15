@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-from .tokenizer import pre_processors, Tokenizer, tokenizer_cases
-from .utils import _minimize, _len, _clean_tokens
-from .lang import tts_langs
 from . import constants
+from . import tokenizer
+from . import utils
+from .lang import tts_langs
 
-import urllib
-import requests
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import logging
 import os
+import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+import urllib
 
 __all__ = ["NaverTTS", "NaverTTSError"]
 
@@ -46,20 +46,20 @@ class NaverTTS:
             functions must take a string and return a string. Defaults to::
 
                 [
-                    pre_processors.tone_marks,
-                    pre_processors.end_of_line,
-                    pre_processors.abbreviations,
-                    pre_processors.word_sub
+                    tokenizer.pre_processors.tone_marks,
+                    tokenizer.pre_processors.end_of_line,
+                    tokenizer.pre_processors.abbreviations,
+                    tokenizer.pre_processors.word_sub
                 ]
 
         tokenizer_func (callable): A function that takes in a string and
             returns a list of string (tokens). Defaults to::
 
-                Tokenizer([
-                    tokenizer_cases.tone_marks,
-                    tokenizer_cases.period_comma,
-                    tokenizer_cases.colon,
-                    tokenizer_cases.other_punctuation
+                tokenizer.Tokenizer([
+                    tokenizer.tokenizer_cases.tone_marks,
+                    tokenizer.tokenizer_cases.period_comma,
+                    tokenizer.tokenizer_cases.colon,
+                    tokenizer.tokenizer_cases.other_punctuation
                 ]).run
 
     See Also:
@@ -91,22 +91,22 @@ class NaverTTS:
         gender="f",
         lang_check=True,
         pre_processor_funcs=[
-            pre_processors.tone_marks,
-            pre_processors.end_of_line_hyphen,
-            pre_processors.newline,
-            pre_processors.abbreviations,
-            pre_processors.word_sub,
+            tokenizer.pre_processors.tone_marks,
+            tokenizer.pre_processors.end_of_line_hyphen,
+            tokenizer.pre_processors.newline,
+            tokenizer.pre_processors.abbreviations,
+            tokenizer.pre_processors.word_sub,
         ],
-        tokenizer_func=Tokenizer(
+        tokenizer_func=tokenizer.Tokenizer(
             [
-                tokenizer_cases.tone_marks,
-                tokenizer_cases.period_comma,
-                tokenizer_cases.colon,
-                tokenizer_cases.other_punctuation,
+                tokenizer.tokenizer_cases.tone_marks,
+                tokenizer.tokenizer_cases.period_comma,
+                tokenizer.tokenizer_cases.colon,
+                tokenizer.tokenizer_cases.other_punctuation,
             ]
         ).run,
     ):
-
+        """Create the TTS class."""
         # Debug
         for k, v in locals().items():
             if k == "self":
@@ -163,20 +163,20 @@ class NaverTTS:
             log.debug("pre-processing: %s", pp)
             text = pp(text)
 
-        if _len(text) <= self.NAVER_TTS_MAX_CHARS:
-            return _clean_tokens([text])
+        if utils._len(text) <= self.NAVER_TTS_MAX_CHARS:
+            return utils._clean_tokens([text])
 
         # Tokenize
         log.debug("tokenizing: %s", self.tokenizer_func)
         tokens = self.tokenizer_func(text)
 
         # Clean
-        tokens = _clean_tokens(tokens)
+        tokens = utils._clean_tokens(tokens)
 
         # Minimize
         min_tokens = []
         for t in tokens:
-            min_tokens += _minimize(t, " ", self.NAVER_TTS_MAX_CHARS)
+            min_tokens += utils._minimize(t, " ", self.NAVER_TTS_MAX_CHARS)
         return min_tokens
 
     def write_to_fp(self, fp):
@@ -260,6 +260,7 @@ class NaverTTSError(Exception):
     """Exception that uses context to present a meaningful error message."""
 
     def __init__(self, msg=None, **kwargs):
+        """Create a TTS exception."""
         self.tts = kwargs.pop("tts", None)
         self.rsp = kwargs.pop("response", None)
         if msg:

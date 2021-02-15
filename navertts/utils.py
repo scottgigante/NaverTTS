@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from .tokenizer.symbols import ALL_PUNC as punc
-from string import whitespace as ws
 import re
+import string.whitespace
 
-_ALL_PUNC_OR_SPACE = re.compile(u"^[{}]*$".format(re.escape(punc + ws)))
+_ALL_PUNC_OR_SPACE = re.compile(u"^[{}]*$".format(re.escape(punc + string.whitespace)))
 """Regex that matches if an entire line is only comprised
 of whitespace and punctuation
 
@@ -11,7 +11,9 @@ of whitespace and punctuation
 
 
 def _minimize(the_string, delim, max_size):
-    """Recursively split a string in the largest chunks
+    """Recursively split a string.
+
+    Splits a string in the largest chunks
     possible from the highest position of a delimiter all the way
     to a maximum size
 
@@ -54,7 +56,9 @@ def _minimize(the_string, delim, max_size):
 
 
 def _len(text):
-    """Same as ``len(text)`` for a string but that decodes
+    """Compute the length of a string.
+
+    Same as ``len(text)`` for a string but that decodes
     ``text`` first in Python 2.x
 
     Args:
@@ -72,7 +76,7 @@ def _len(text):
 
 
 def _clean_tokens(tokens):
-    """Clean a list of strings
+    """Clean a list of strings.
 
     Args:
         tokens (list): A list of strings (tokens) to clean.

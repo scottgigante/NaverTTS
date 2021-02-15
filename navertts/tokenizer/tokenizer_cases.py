@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from . import RegexBuilder, symbols
+from . import RegexBuilder
+from . import symbols
 
 
 def tone_marks():
