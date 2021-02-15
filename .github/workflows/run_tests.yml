@@ -81,7 +81,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install --upgrade wheel setuptools
-        pip install --upgrade .
+        pip install --upgrade .[test]
         python -c "import navertts"
         navertts-cli --help 2>&1 1>/dev/null
 
