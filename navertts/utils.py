@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from .tokenizer.symbols import ALL_PUNC as punc
 import re
+import sys
 from string import whitespace
 
 _ALL_PUNC_OR_SPACE = re.compile(u"^[{}]*$".format(re.escape(punc + whitespace)))
@@ -92,3 +93,8 @@ def _clean_tokens(tokens):
 def _quote_all(input_string, *args, **kwargs):  # pylint:disable=unused-argument
     """NAVER Translate needs every character quoted."""
     return "".join("%%%x" % ord(char) for char in input_string)
+
+
+def _sanitize(input_string):
+    """Sanitize string for logging purposes."""
+    return input_string.encode(sys.stdout.encoding, "xmlcharrefreplace").decode()

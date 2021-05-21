@@ -111,7 +111,7 @@ class NaverTTS:
         for k, v in locals().items():
             if k == "self":
                 continue
-            log.debug("%s: %s", k, v)
+            log.debug(utils._sanitize("%s: %s" % (k, v)))
 
         # Text
         assert text, "No text to speak"
@@ -229,7 +229,7 @@ class NaverTTS:
             try:
                 for chunk in r.iter_content(chunk_size=1024):
                     fp.write(chunk)
-                log.debug("part-%i written to %s", idx, fp)
+                log.debug(utils._sanitize("part-%i written to %s" % (idx, fp)))
             except (AttributeError, TypeError) as e:
                 raise TypeError(
                     "'fp' is not a file-like object or it does not take bytes: %s"
@@ -250,7 +250,7 @@ class NaverTTS:
         try:
             with open(savefile, "wb") as f:
                 self.write_to_fp(f)
-                log.debug("Saved to %s", savefile)
+                log.debug(utils._sanitize("Saved to %s" % savefile))
         except NaverTTSError:
             os.remove(savefile)
             raise
