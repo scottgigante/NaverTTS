@@ -111,7 +111,7 @@ class NaverTTS:
         for k, v in locals().items():
             if k == "self":
                 continue
-            log.debug(utils._sanitize("%s: %s" % (k, v)))
+            utils._log(log.debug, "%s: %s", k, v)
 
         # Text
         assert text, "No text to speak"
@@ -127,8 +127,8 @@ class NaverTTS:
                 if lang.lower() not in langs:
                     raise ValueError("Language not supported: %s" % lang)
             except RuntimeError as e:
-                log.debug(str(e), exc_info=True)
-                log.warning(str(e))
+                utils._log(log.debug, str(e), exc_info=True)
+                utils._log(log.warning, str(e))
 
         self.lang_check = lang_check
         self.lang = lang.lower()
@@ -160,14 +160,14 @@ class NaverTTS:
 
         # Apply pre-processors
         for pp in self.pre_processor_funcs:
-            log.debug("pre-processing: %s", pp)
+            utils._log(log.debug, "pre-processing: %s", pp)
             text = pp(text)
 
         if utils._len(text) <= self.NAVER_TTS_MAX_CHARS:
             return utils._clean_tokens([text])
 
         # Tokenize
-        log.debug("tokenizing: %s", self.tokenizer_func)
+        utils._log(log.debug, "tokenizing: %s", self.tokenizer_func)
         tokens = self.tokenizer_func(text)
 
         # Clean
@@ -195,7 +195,7 @@ class NaverTTS:
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
         text_parts = self._tokenize(self.text)
-        log.debug("text_parts: %i", len(text_parts))
+        utils._log(log.debug, "text_parts: %i", len(text_parts))
         assert text_parts, "No text to send to TTS API"
 
         for idx, part in enumerate(text_parts):
@@ -212,24 +212,24 @@ class NaverTTS:
                     verify=False,
                 )
 
-                log.debug("headers-%i: %s", idx, r.request.headers)
-                log.debug("url-%i: %s", idx, r.request.url)
-                log.debug("status-%i: %s", idx, r.status_code)
+                utils._log(log.debug, "headers-%i: %s", idx, r.request.headers)
+                utils._log(log.debug, "url-%i: %s", idx, r.request.url)
+                utils._log(log.debug, "status-%i: %s", idx, r.status_code)
 
                 r.raise_for_status()
             except requests.exceptions.HTTPError as e:  # pragma: no cover
                 # Request successful, bad response
-                log.debug(str(e))
+                utils._log(log.debug, str(e))
                 raise NaverTTSError(tts=self, response=r)
             except requests.exceptions.RequestException as e:  # pragma: no cover
                 # Request failed
-                log.debug(str(e))
+                utils._log(log.debug, str(e))
                 raise NaverTTSError(tts=self)
 
             try:
                 for chunk in r.iter_content(chunk_size=1024):
                     fp.write(chunk)
-                log.debug(utils._sanitize("part-%i written to %s" % (idx, fp)))
+                utils._log(log.debug, "part-%i written to %s", idx, fp)
             except (AttributeError, TypeError) as e:
                 raise TypeError(
                     "'fp' is not a file-like object or it does not take bytes: %s"
@@ -250,7 +250,7 @@ class NaverTTS:
         try:
             with open(savefile, "wb") as f:
                 self.write_to_fp(f)
-                log.debug(utils._sanitize("Saved to %s" % savefile))
+                utils._log(log.debug, "Saved to %s", savefile)
         except NaverTTSError:
             os.remove(savefile)
             raise

@@ -95,6 +95,10 @@ def _quote_all(input_string, *args, **kwargs):  # pylint:disable=unused-argument
     return "".join("%%%x" % ord(char) for char in input_string)
 
 
-def _sanitize(input_string):
-    """Sanitize string for logging purposes."""
-    return input_string.encode(sys.stdout.encoding, "xmlcharrefreplace").decode()
+def _log(log_fun, input_string, *args):
+    """Log message, sanitizing string if necessary."""
+    try:
+        return log_fun(input_string, *args)
+    except UnicodeEncodeError:
+        input_string = input_string.encode("ascii", "xmlcharrefreplace").decode()
+        return log_fun(input_string, *args)
