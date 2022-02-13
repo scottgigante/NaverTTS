@@ -17,7 +17,7 @@ LANGUAGES = {
 SPEAKERS = {
     "en": {"f": "clara", "m": "matt"},
     "es": {"f": "carmen", "m": "jose"},
-    "ja": {"m": "shinji"},
+    "ja": {"f": "yuri", "m": "shinji"},
     "ko": {"f": "kyuri", "m": "jinho"},
     "zh": {"f": "meimei", "m": "liangliang"},
 }
