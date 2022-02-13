@@ -9,12 +9,7 @@ setup(
     packages=find_packages(),
     python_requires=">= 3.5",
     include_package_data=True,
-    install_requires=[
-        "six",
-        "beautifulsoup4",
-        "click",
-        "requests",
-    ],
+    install_requires=["six", "beautifulsoup4", "click", "requests",],
     extras_require={
         "test": [
             "pytest >= 4.6",
@@ -35,12 +30,7 @@ setup(
     url="https://github.com/scottgigante/NaverTTS",
     version=version,
     test_suite="navertts.tests",
-    keywords=[
-        "navertts",
-        "text to speech",
-        "NAVER Papago",
-        "TTS",
-    ],
+    keywords=["navertts", "text to speech", "NAVER Papago", "TTS",],
     classifiers=[
         "Environment :: Console",
         "Intended Audience :: Developers",

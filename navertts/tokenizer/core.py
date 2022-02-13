@@ -188,7 +188,7 @@ class PreProcessorSub:
         """Create the preprocessor."""
 
         def search_func(x):
-            return u"{}".format(x)
+            return "{}".format(x)
 
         flags = re.I if ignore_case else 0
 
