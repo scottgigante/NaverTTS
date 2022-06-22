@@ -23,6 +23,7 @@ setup(
             "testfixtures",
             "mock",
             "coveralls",
+            "parameterized",
         ]
     },
     entry_points={"console_scripts": ["navertts-cli=navertts.cli:tts_cli"]},
