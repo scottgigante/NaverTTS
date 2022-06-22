@@ -15,7 +15,7 @@ LANGUAGES = {
 
 # https://apidocs.ncloud.com/en/ai-naver/clova_speech_synthesis/tts/
 SPEAKERS = {
-    "en": {"f": "clara", "m": "matt"},
+    "en": {"f": "danna", "m": "matt"},
     "es": {"f": "carmen", "m": "jose"},
     "ja": {"f": "yuri", "m": "shinji"},
     "ko": {"f": "kyuri", "m": "jinho"},
