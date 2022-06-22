@@ -2,9 +2,11 @@
 import os
 import pytest
 from mock import Mock
+from parameterized import parameterized
 
 from navertts.tts import NaverTTS, NaverTTSError
 from navertts.lang import _extra_langs
+from navertts.constants import LANGUAGES
 
 # Testing all languages takes some time.
 # Set TEST_LANGS envvar to choose languages to test.
@@ -87,11 +89,12 @@ def test_bad_fp_type():
         tts.write_to_fp(5)
 
 
-def test_save(tmp_path):
+@parameterized([(lang,) for lang in LANGUAGES.keys()])
+def test_save(lang, tmp_path):
     """Save .mp3 file successfully."""
     filename = tmp_path / "save.mp3"
     # Create NaverTTS and save
-    tts = NaverTTS(text="test")
+    tts = NaverTTS(lang=lang, text="test")
     tts.save(filename)
 
     # Check if file created is > 2k
